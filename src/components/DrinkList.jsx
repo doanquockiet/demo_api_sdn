@@ -1,30 +1,51 @@
 import React, { useEffect, useState } from "react";
-import { Table, Image, Tag, message } from "antd";
+import { Table, Image, Tag, message, Button, Popconfirm } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const DrinkList = () => {
   const [drinks, setDrinks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchDrinks = async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/api/v1/drink/get-all-drink");
-        if (response.data && response.data.data) {
-          setDrinks(response.data.data);
-        } else {
-          throw new Error("Invalid response structure");
-        }
-      } catch (error) {
-        message.error("Lỗi khi lấy danh sách đồ uống");
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDrinks();
   }, []);
+
+  const fetchDrinks = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://localhost:8080/api/v1/drink/get-all-drink");
+      if (response.data && response.data.data) {
+        setDrinks(response.data.data);
+      } else {
+        throw new Error("Invalid response structure");
+      }
+    } catch (error) {
+      message.error("Lỗi khi lấy danh sách đồ uống");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Hàm xử lý xóa sản phẩm
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/v1/drink/delete/${id}`);
+      message.success("Đã xóa đồ uống thành công!");
+      fetchDrinks(); // Cập nhật danh sách sau khi xóa
+    } catch (error) {
+      console.error("Lỗi khi xóa đồ uống:", error);
+      message.error("Không thể xóa đồ uống.");
+    }
+  };
+
+  // Hàm xử lý cập nhật sản phẩm
+  const handleUpdate = (id) => {
+    navigate(`/update-drink/${id}`); // Điều hướng đến trang cập nhật
+  };
 
   const columns = [
     {
@@ -60,6 +81,32 @@ const DrinkList = () => {
       dataIndex: "updatedAt",
       key: "updatedAt",
       render: (date) => new Date(date).toLocaleString(),
+    },
+    {
+      title: "Hành động",
+      key: "actions",
+      render: (_, record) => (
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={() => handleUpdate(record._id)}
+          >
+            Cập Nhật
+          </Button>
+
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa?"
+            okText="Xóa"
+            cancelText="Hủy"
+            onConfirm={() => handleDelete(record._id)}
+          >
+            <Button type="danger" icon={<DeleteOutlined />}>
+              Xóa
+            </Button>
+          </Popconfirm>
+        </div>
+      ),
     },
   ];
 
