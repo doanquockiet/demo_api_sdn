@@ -6,6 +6,7 @@ import NotFound from "../pages/NotFound";
 import AppLayout from "../components/AppLayout";
 import AddDrink from "../components/AddDrink";
 import UpdateDrink from "../components/UpdateDrink";
+import ToppingList from "../components/ToppingList";
 
 const AppRoutes = () => {
     return (
@@ -16,6 +17,7 @@ const AppRoutes = () => {
                     <Route path="/drinks" element={<Drinks />} />
                     <Route path="/add-drink" element={<AddDrink />} />
                     <Route path="/update-drink/:id" element={<UpdateDrink />} />
+                    <Route path="/toppings" element={<ToppingList />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </AppLayout>
