@@ -3,8 +3,8 @@ import RatingStatistics from "../components/RatingStatistics";
 
 const RatingStatics = () => {
   return (
-    <div>
-      <h1>Thống Kê Đánh Giá</h1>
+    <div style={{ padding: "20px" }}>
+      <h2>Thống kê Đánh Giá</h2>
       <RatingStatistics />
     </div>
   );
