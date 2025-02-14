@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Row, Col, Card, Button, Tag, message, Typography } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import axios from "axios";
+
 const { Meta } = Card;
 const { Title } = Typography;
 
@@ -49,20 +50,30 @@ const Home = () => {
                                             height: "220px",
                                             objectFit: "cover",
                                             transition: "0.3s ease-in-out",
+                                            filter: drink.drink_quantity === 0 ? "grayscale(80%)" : "none",
                                         }}
                                     />
-                                    {/* Hiệu ứng overlay khi hover */}
-                                    <div className="overlay">
-                                        <Button type="primary" icon={<ShoppingCartOutlined />} className="btn-hover">
-                                            Thêm vào giỏ
-                                        </Button>
-                                    </div>
+                                    {/* Nếu số lượng = 0, hiển thị "SOLD OUT" */}
+                                    {drink.drink_quantity === 0 && (
+                                        <div className="sold-out">
+                                            <span>SOLD OUT</span>
+                                        </div>
+                                    )}
+                                    {/* Hiệu ứng overlay khi hover (chỉ hiển thị nếu còn hàng) */}
+                                    {drink.drink_quantity > 0 && (
+                                        <div className="overlay">
+                                            <Button type="primary" icon={<ShoppingCartOutlined />} className="btn-hover">
+                                                Thêm vào giỏ
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                             }
                             style={{
                                 borderRadius: "10px",
                                 overflow: "hidden",
                                 boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                opacity: drink.drink_quantity === 0 ? 0.7 : 1,
                             }}
                         >
                             <Meta
@@ -72,8 +83,8 @@ const Home = () => {
                             <p style={{ marginTop: "10px", fontSize: "15px", fontWeight: "bold", color: "#ff4d4f" }}>
                                 Giá: ${drink.drink_price.toFixed(2)}
                             </p>
-                            <Tag color="geekblue" style={{ fontSize: "13px", padding: "5px 10px", borderRadius: "5px" }}>
-                                {drink.drink_type.toUpperCase()}
+                            <Tag color={drink.drink_quantity === 0 ? "red" : "geekblue"} style={{ fontSize: "13px", padding: "5px 10px", borderRadius: "5px" }}>
+                                {drink.drink_quantity === 0 ? "Hết hàng" : drink.drink_type.toUpperCase()}
                             </Tag>
                         </Card>
                     </Col>
@@ -83,32 +94,47 @@ const Home = () => {
             {/* CSS Custom */}
             <style>
                 {`
-            .overlay {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              background: rgba(0, 0, 0, 0.5);
-              opacity: 0;
-              transition: opacity 0.3s ease-in-out;
-            }
-  
-            .btn-hover {
-              display: none;
-            }
-  
-            .ant-card:hover .overlay {
-              opacity: 1;
-            }
-  
-            .ant-card:hover .btn-hover {
-              display: inline-block;
-            }
-          `}
+                    .overlay {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: rgba(0, 0, 0, 0.5);
+                        opacity: 0;
+                        transition: opacity 0.3s ease-in-out;
+                    }
+                    
+                    .btn-hover {
+                        display: none;
+                    }
+
+                    .ant-card:hover .overlay {
+                        opacity: 1;
+                    }
+
+                    .ant-card:hover .btn-hover {
+                        display: inline-block;
+                    }
+
+                    /* Hiển thị "SOLD OUT" cho sản phẩm hết hàng */
+                    .sold-out {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(255, 0, 0, 0.8);
+                        color: white;
+                        font-weight: bold;
+                        font-size: 18px;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        text-transform: uppercase;
+                    }
+                `}
             </style>
         </div>
     );
