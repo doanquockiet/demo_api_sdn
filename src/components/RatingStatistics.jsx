@@ -27,7 +27,6 @@ class RatingStatistics extends Component {
       activeKey: "1",
       selectedMonth: new Date().getMonth() + 1, // Tháng hiện tại
       selectedYear: new Date().getFullYear(), // Năm hiện tại
-      topDrinks: [],
     };
   }
 
@@ -39,13 +38,14 @@ class RatingStatistics extends Component {
     );
   }
 
-  fetchRatingStatistics = async () => {
+  fetchRatingStatistics = async (
+    month = this.state.selectedMonth,
+    year = this.state.selectedYear
+  ) => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/v1/rating/statistics",
-        {
-          headers: { "Cache-Control": "no-cache" },
-        }
+        `http://localhost:8080/api/v1/rating/statistics?month=${month}&year=${year}`,
+        { headers: { "Cache-Control": "no-cache" } }
       );
 
       if (response.data) {
@@ -79,16 +79,38 @@ class RatingStatistics extends Component {
 
   handleFilterChange = (event, type) => {
     const value = parseInt(event.target.value, 10);
-    this.setState({ [type]: value }, () =>
-      this.fetchTopRatedDrinks(
-        this.state.selectedMonth,
-        this.state.selectedYear
-      )
-    );
+    this.setState({ [type]: value }, () => {
+      // Gọi API dựa vào tab hiện tại
+      if (this.state.activeKey === "1") {
+        this.fetchRatingStatistics(
+          this.state.selectedMonth,
+          this.state.selectedYear
+        );
+      } else {
+        this.fetchTopRatedDrinks(
+          this.state.selectedMonth,
+          this.state.selectedYear
+        );
+      }
+    });
   };
 
   handleTabChange = (key) => {
-    this.setState({ activeKey: key });
+    this.setState({ activeKey: key }, () => {
+      if (key === "1") {
+        // Khi chuyển sang tab "Phân bố điểm đánh giá"
+        this.fetchRatingStatistics(
+          this.state.selectedMonth,
+          this.state.selectedYear
+        );
+      } else if (key === "2") {
+        // Khi chuyển sang tab "Top Đồ Uống Được Đánh Giá Cao"
+        this.fetchTopRatedDrinks(
+          this.state.selectedMonth,
+          this.state.selectedYear
+        );
+      }
+    });
   };
 
   render() {
@@ -127,6 +149,52 @@ class RatingStatistics extends Component {
                   bordered
                   style={{ height: 450 }}
                 >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "10px",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    {/* Chọn tháng */}
+                    <select
+                      style={{
+                        padding: "8px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                      }}
+                      onChange={(e) =>
+                        this.handleFilterChange(e, "selectedMonth")
+                      }
+                      value={selectedMonth}
+                    >
+                      {[...Array(12)].map((_, i) => (
+                        <option key={i + 1} value={i + 1}>
+                          Tháng {i + 1}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Chọn năm */}
+                    <select
+                      style={{
+                        padding: "8px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                      }}
+                      onChange={(e) =>
+                        this.handleFilterChange(e, "selectedYear")
+                      }
+                      value={selectedYear}
+                    >
+                      {[...Array(2)].map((_, i) => (
+                        <option key={currentYear - i} value={currentYear - i}>
+                          Năm {currentYear - i}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <ResponsiveContainer
                     key={activeKey}
                     width="100%"
