@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Card, Col, Row, Spin, Table, Select, Space, Statistic } from "antd";
+import {
+  Card,
+  Col,
+  Row,
+  Spin,
+  Table,
+  Select,
+  Space,
+  Statistic,
+  List,
+  Avatar,
+  Typography,
+} from "antd";
 import axios from "axios";
 import {
   BarChart,
@@ -12,7 +24,9 @@ import {
   CartesianGrid,
   LineChart,
   Line,
+  Cell,
 } from "recharts";
+
 import {
   ShoppingCartOutlined,
   DollarOutlined,
@@ -20,11 +34,12 @@ import {
   ClockCircleOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
-import "moment/locale/vi";
+import { TrophyOutlined } from "@ant-design/icons";
+const { Text } = Typography;
 
-moment.locale("vi");
 const { Option } = Select;
-
+// Màu sắc theo thứ hạng
+const colors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 const OrderStatistics = () => {
   const [loading, setLoading] = useState(true);
   const [year, setYear] = useState(moment().year());
@@ -193,7 +208,6 @@ const OrderStatistics = () => {
               </Card>
             </Col>
           </Row>
-
           {/* Biểu đồ doanh thu theo tháng */}
           <Card
             title={`Biểu Đồ Doanh Thu (${
@@ -228,61 +242,166 @@ const OrderStatistics = () => {
               )}
             </ResponsiveContainer>
           </Card>
-
-          {/* Biểu đồ đồ uống bán chạy */}
+          {/* Top 3 Đồ Uống Bán Chạy Nhất */}
           <Card
-            title={`Top 3 Đồ Uống Bán Chạy Nhất (${
+            title={`🥤 Top 3 Đồ Uống Bán Chạy Nhất (${
               month ? `Tháng ${month}` : "Cả Năm"
             })`}
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 20, textAlign: "center" }}
           >
-            <ResponsiveContainer width="100%" height={300}>
-              {topDrinks.length ? (
-                <BarChart data={topDrinks}>
-                  <XAxis dataKey="drink_name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="totalSold" fill="#82ca9d" name="Số Lượng Bán" />
-                </BarChart>
-              ) : (
-                <h3 style={{ textAlign: "center" }}>
-                  Không có dữ liệu bán hàng
-                </h3>
-              )}
-            </ResponsiveContainer>
-          </Card>
-
-          <Card
-            title={`Top 3 Khách Hàng Chi Tiêu Nhiều Nhất (${
-              month ? `Tháng ${month}` : "Cả Năm"
-            })`}
-            style={{ marginTop: 20 }}
-          >
-            {topCustomers.length === 0 ? (
-              <h3 style={{ textAlign: "center" }}>Không có dữ liệu</h3>
+            {topDrinks.length ? (
+              <Row justify="center" align="middle">
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={topDrinks} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis type="category" dataKey="drink_name" width={150} />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="totalSold" name="Số Lượng Bán">
+                      {topDrinks.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={colors[index]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Row>
             ) : (
-              <Table
-                dataSource={topCustomers.map((customer, index) => ({
-                  ...customer,
-                  key: index, // ✅ Fix lỗi hiển thị nếu _id bị sai
-                }))}
-                columns={[
-                  {
-                    title: "Khách Hàng",
-                    dataIndex: "user_name",
-                    key: "user",
-                    render: (text) => text || "Không có tên",
-                  },
-                  {
-                    title: "Tổng Chi Tiêu ($)",
-                    dataIndex: "totalSpent",
-                    key: "totalSpent",
-                    render: (value) => `$${value.toLocaleString()}`,
-                  },
-                ]}
-                pagination={false}
-              />
+              <h3 style={{ textAlign: "center", padding: "20px" }}>
+                Không có dữ liệu
+              </h3>
+            )}
+          </Card>
+          ;{/* Top 3 Khách Hàng Chi Tiêu Nhiều Nhất */}
+          <Card
+            title={`🏆 Top 3 Khách Hàng Chi Tiêu Nhiều Nhất (${
+              month ? `Tháng ${month}` : "Cả Năm"
+            })`}
+            style={{ marginTop: 20, textAlign: "center" }}
+          >
+            {topCustomers.length >= 3 ? (
+              <Row justify="center" align="bottom" style={{ height: "250px" }}>
+                {/* 🥈 Hạng 2 - Bên trái, thấp hơn */}
+                <Col
+                  span={6}
+                  style={{ textAlign: "center", marginTop: "30px" }}
+                >
+                  <Avatar
+                    size={80}
+                    src={
+                      topCustomers[1].user_avatar ||
+                      "https://via.placeholder.com/80"
+                    }
+                  />
+                  <div
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      marginTop: "8px",
+                    }}
+                  >
+                    <TrophyOutlined
+                      style={{ color: "silver", fontSize: "18px" }}
+                    />{" "}
+                    {topCustomers[1].full_name}
+                  </div>
+                  <Text style={{ fontSize: "14px", color: "#555" }}>
+                    💰 ${topCustomers[1].totalSpent.toLocaleString()}
+                  </Text>
+                  <div
+                    style={{
+                      height: "60px",
+                      background: "#d9d9d9",
+                      width: "80%",
+                      margin: "auto",
+                      marginTop: "10px",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </Col>
+
+                {/* 🥇 Hạng 1 - Ở giữa, cao nhất */}
+                <Col
+                  span={6}
+                  style={{ textAlign: "center", marginTop: "-30px" }}
+                >
+                  <Avatar
+                    size={100}
+                    src={
+                      topCustomers[0].user_avatar ||
+                      "https://via.placeholder.com/100"
+                    }
+                  />
+                  <div
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "bold",
+                      marginTop: "8px",
+                    }}
+                  >
+                    <TrophyOutlined
+                      style={{ color: "gold", fontSize: "20px" }}
+                    />{" "}
+                    {topCustomers[0].full_name}
+                  </div>
+                  <Text style={{ fontSize: "16px", color: "#222" }}>
+                    💰 ${topCustomers[0].totalSpent.toLocaleString()}
+                  </Text>
+                  <div
+                    style={{
+                      height: "100px",
+                      background: "#ffd700",
+                      width: "80%",
+                      margin: "auto",
+                      marginTop: "10px",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </Col>
+
+                {/* 🥉 Hạng 3 - Bên phải, thấp hơn */}
+                <Col
+                  span={6}
+                  style={{ textAlign: "center", marginTop: "30px" }}
+                >
+                  <Avatar
+                    size={80}
+                    src={
+                      topCustomers[2].user_avatar ||
+                      "https://via.placeholder.com/80"
+                    }
+                  />
+                  <div
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      marginTop: "8px",
+                    }}
+                  >
+                    <TrophyOutlined
+                      style={{ color: "#cd7f32", fontSize: "18px" }}
+                    />{" "}
+                    {topCustomers[2].full_name}
+                  </div>
+                  <Text style={{ fontSize: "14px", color: "#555" }}>
+                    💰 ${topCustomers[2].totalSpent.toLocaleString()}
+                  </Text>
+                  <div
+                    style={{
+                      height: "60px",
+                      background: "#d9d9d9",
+                      width: "80%",
+                      margin: "auto",
+                      marginTop: "10px",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </Col>
+              </Row>
+            ) : (
+              <h3 style={{ textAlign: "center", padding: "20px" }}>
+                Không có đủ dữ liệu
+              </h3>
             )}
           </Card>
         </>
