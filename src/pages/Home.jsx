@@ -34,7 +34,7 @@ const Home = () => {
             <Title level={2} style={{ textAlign: "center", marginBottom: "30px", fontWeight: "bold" }}>
                 Danh Sách Đồ Uống
             </Title>
-
+        
             <Row gutter={[24, 24]} justify="center">
                 {drinks.map((drink) => (
                     <Col xs={24} sm={12} md={8} lg={6} key={drink._id}>
