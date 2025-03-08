@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, Button, Tag, message, Typography } from "antd";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import { Row, Col, Card, Typography, message, Modal, Button, Select, Checkbox, Input } from "antd";
 import axios from "axios";
 
 const { Meta } = Card;
 const { Title } = Typography;
+const { Option } = Select;
 
 const Home = () => {
     const [drinks, setDrinks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedDrink, setSelectedDrink] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchDrinks = async () => {
@@ -29,110 +31,157 @@ const Home = () => {
         fetchDrinks();
     }, []);
 
+    const fetchDrinkDetail = async (id, isSoldOut) => {
+        if (isSoldOut) return; // Ngăn chặn click khi hết hàng
+        try {
+            const response = await axios.get(`http://localhost:8080/api/v1/drink/get-detail/${id}`);
+            setSelectedDrink(response.data.data);
+            setIsModalVisible(true);
+        } catch (error) {
+            message.error("Lỗi khi lấy chi tiết đồ uống");
+            console.error(error);
+        }
+    };
+
     return (
-        <div style={{ padding: "40px", backgroundColor: "#f8f9fa" }}>
-            <Title level={2} style={{ textAlign: "center", marginBottom: "30px", fontWeight: "bold" }}>
-                Danh Sách Đồ Uống
-            </Title>
-        
-            <Row gutter={[24, 24]} justify="center">
-                {drinks.map((drink) => (
-                    <Col xs={24} sm={12} md={8} lg={6} key={drink._id}>
-                        <Card
-                            hoverable
-                            cover={
-                                <div style={{ position: "relative", overflow: "hidden", borderRadius: "10px 10px 0 0" }}>
-                                    <img
-                                        alt={drink.drink_name}
-                                        src={drink.drink_image}
-                                        style={{
-                                            width: "100%",
-                                            height: "220px",
-                                            objectFit: "cover",
-                                            transition: "0.3s ease-in-out",
-                                            filter: drink.drink_quantity === 0 ? "grayscale(80%)" : "none",
-                                        }}
-                                    />
-                                    {/* Nếu số lượng = 0, hiển thị "SOLD OUT" */}
-                                    {drink.drink_quantity === 0 && (
-                                        <div className="sold-out">
-                                            <span>SOLD OUT</span>
-                                        </div>
-                                    )}
-                                    {/* Hiệu ứng overlay khi hover (chỉ hiển thị nếu còn hàng) */}
-                                    {drink.drink_quantity > 0 && (
-                                        <div className="overlay">
-                                            <Button type="primary" icon={<ShoppingCartOutlined />} className="btn-hover">
-                                                Thêm vào giỏ
-                                            </Button>
-                                        </div>
-                                    )}
-                                </div>
-                            }
-                            style={{
-                                borderRadius: "10px",
-                                overflow: "hidden",
-                                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-                                opacity: drink.drink_quantity === 0 ? 0.7 : 1,
-                            }}
-                        >
-                            <Meta
-                                title={<span style={{ fontWeight: "bold", fontSize: "16px" }}>{drink.drink_name}</span>}
-                                description={<p style={{ fontSize: "13px", color: "#555", marginBottom: "5px" }}>{drink.drink_description}</p>}
-                            />
-                            <p style={{ marginTop: "10px", fontSize: "15px", fontWeight: "bold", color: "#ff4d4f" }}>
-                                Giá: ${drink.drink_price.toFixed(2)}
-                            </p>
-                            <Tag color={drink.drink_quantity === 0 ? "red" : "geekblue"} style={{ fontSize: "13px", padding: "5px 10px", borderRadius: "5px" }}>
-                                {drink.drink_quantity === 0 ? "Hết hàng" : drink.drink_type.toUpperCase()}
-                            </Tag>
-                        </Card>
-                    </Col>
-                ))}
+        <div className="container">
+            <Title level={2} className="title">Danh Sách Đồ Uống</Title>
+
+            <Row gutter={[16, 24]} justify="center">
+                {drinks.map((drink) => {
+                    const isSoldOut = drink.drink_quantity <= 0;
+                    return (
+                        <Col xs={24} sm={12} md={8} lg={6} key={drink._id}>
+                            <Card
+                                hoverable={!isSoldOut}
+                                className={`drink-card ${isSoldOut ? "sold-out-card" : ""}`}
+                                onClick={() => fetchDrinkDetail(drink._id, isSoldOut)}
+                                cover={
+                                    <div className="image-container">
+                                        <img
+                                            alt={drink.drink_name}
+                                            src={drink.drink_image}
+                                            className="drink-image"
+                                        />
+                                        {drink.best_seller && <span className="best-seller">Best Seller</span>}
+                                        {isSoldOut && <span className="sold-out">Sold Out</span>}
+                                    </div>
+                                }
+                            >
+                                <Meta
+                                    title={<span className="drink-title">{drink.drink_name}</span>}
+                                    description={<p className="drink-price">{drink.drink_price.toLocaleString()}đ</p>}
+                                />
+                            </Card>
+                        </Col>
+                    );
+                })}
             </Row>
 
-            {/* CSS Custom */}
+            <Modal
+                title={selectedDrink?.drink_name}
+                open={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                footer={null}
+            >
+                {selectedDrink && (
+                    <div>
+                        <div className="modal-image-container">
+                            <img src={selectedDrink.drink_image} alt={selectedDrink.drink_name} className="modal-image" />
+                        </div>
+                        <p className="modal-price">Giá: {selectedDrink.drink_price.toLocaleString()}đ</p>
+                        <p>{selectedDrink.drink_description}</p>
+                        <Title level={5}>Chọn size *</Title>
+                        <Select defaultValue="Size L" style={{ width: "100%" }}>
+                            <Option value="L">Size L +0đ</Option>
+                        </Select>
+                        <Title level={5} style={{ marginTop: "10px" }}>Ghi chú thêm</Title>
+                        <Input placeholder="Nhập ghi chú cho món này" />
+                        <Title level={5} style={{ marginTop: "10px" }}>Chọn Topping (Tối đa 2 món)</Title>
+                        <Checkbox> Kem Phô Mai Macchiato +10.000đ</Checkbox>
+                        <Checkbox> Shot Espresso +10.000đ</Checkbox>
+                        <Checkbox> Trái Vải +10.000đ</Checkbox>
+                        <Checkbox> Hạt Sen +10.000đ</Checkbox>
+                        <Button type="primary" block style={{ marginTop: "20px" }}>
+                            Thêm vào giỏ
+                        </Button>
+                    </div>
+                )}
+            </Modal>
+
             <style>
                 {`
-                    .overlay {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
+                    .container {
+                        padding: 40px;
+                        background-color: #fff;
+                        text-align: center;
+                    }
+                    .title {
+                        margin-bottom: 30px;
+                        font-weight: bold;
+                    }
+                    .drink-card {
+                        border-radius: 15px;
+                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+                        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                        cursor: pointer;
+                    }
+                    .drink-card:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+                    }
+                    .drink-card.sold-out-card {
+                        cursor: not-allowed;
+                        opacity: 0.6;
+                    }
+                    .image-container {
+                        position: relative;
                         width: 100%;
-                        height: 100%;
+                        height: 250px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        background: rgba(0, 0, 0, 0.5);
-                        opacity: 0;
-                        transition: opacity 0.3s ease-in-out;
+                        overflow: hidden;
                     }
-                    
-                    .btn-hover {
-                        display: none;
+                    .drink-image {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-top-left-radius: 15px;
+                        border-top-right-radius: 15px;
                     }
-
-                    .ant-card:hover .overlay {
-                        opacity: 1;
-                    }
-
-                    .ant-card:hover .btn-hover {
-                        display: inline-block;
-                    }
-
-                    /* Hiển thị "SOLD OUT" cho sản phẩm hết hàng */
-                    .sold-out {
+                    .best-seller, .sold-out {
                         position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        background: rgba(255, 0, 0, 0.8);
+                        top: 10px;
+                        left: 10px;
+                        background: red;
                         color: white;
+                        padding: 5px 10px;
+                        font-size: 12px;
                         font-weight: bold;
-                        font-size: 18px;
-                        padding: 10px 20px;
                         border-radius: 5px;
-                        text-transform: uppercase;
+                    }
+                    .best-seller {
+                        background: orange;
+                    }
+                    .modal-image-container {
+                        width: 100%;
+                        height: 250px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        overflow: hidden;
+                    }
+                    .modal-image {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 10px;
+                    }
+                    .modal-price {
+                        font-size: 16px;
+                        color: #ff4d4f;
+                        font-weight: bold;
                     }
                 `}
             </style>
