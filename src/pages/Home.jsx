@@ -164,25 +164,42 @@ const Home = () => {
                     .best-seller {
                         background: orange;
                     }
-                    .modal-image-container {
-                        width: 100%;
-                        height: 250px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        overflow: hidden;
-                    }
-                    .modal-image {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        border-radius: 10px;
-                    }
-                    .modal-price {
-                        font-size: 16px;
-                        color: #ff4d4f;
-                        font-weight: bold;
-                    }
+                 .modal-image-container {
+    width: 100%;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #f5f5f5; /* Màu nền để làm nổi bật ảnh nếu có khoảng trống */
+}
+
+.modal-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Hiển thị toàn bộ ảnh mà không bị cắt */
+    border-radius: 10px;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #f5f5f5; /* Màu nền nếu ảnh không full */
+}
+
+.drink-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Hiển thị toàn bộ ảnh mà không bị cắt */
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
                 `}
             </style>
         </div>

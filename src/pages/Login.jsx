@@ -10,17 +10,19 @@ const Login = () => {
         <div className="login-container">
             <Card className="login-card">
                 <Title level={3}>Đăng Nhập</Title>
-                
+
                 <Input placeholder="Email" type="email" className="login-input" />
                 <Input placeholder="Mật khẩu" type="password" className="login-input" />
-                
+
                 <Button type="primary" className="login-button">Đăng Nhập</Button>
-                
-                <GoogleAuth />
-                
+
+                <div className="login_google">
+                    <GoogleAuth />
+                </div>
+
                 <Link to="/forgot-password" className="forgot-password-link">Quên mật khẩu?</Link>
             </Card>
-            
+
             <style>
                 {`
                     html, body {
@@ -66,6 +68,9 @@ const Login = () => {
                     .forgot-password-link:hover {
                         text-decoration: underline;
                     }
+                        .login_google{
+                        margin-top: 20px
+                        }
                 `}
             </style>
         </div>
