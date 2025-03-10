@@ -50,7 +50,7 @@ export const CartProvider = ({ children }) => {
   };
 
   // Cập nhật số lượng sản phẩm
-  const updateCartItem = (productId, quantity) => {
+  const updateQuantity = (productId, quantity) => {
     setCart((prevCart) => {
       const updatedCart = prevCart.map((item) =>
         item._id === productId ? { ...item, quantity } : item
@@ -68,10 +68,34 @@ export const CartProvider = ({ children }) => {
       return updatedCart;
     });
   };
+  const calculateTotal = () => {
+    return cart.reduce(
+      (total, item) => total + item.drink_price * item.quantity,
+      0
+    );
+  };
 
+  const clearCart = () => {
+    setCart([]); // Xóa toàn bộ giỏ hàng
+  };
+
+  // Lưu đơn hàng vào lịch sử
+  const saveOrderToHistory = (order) => {
+    const history = JSON.parse(localStorage.getItem("orderHistory")) || [];
+    history.push(order);
+    localStorage.setItem("orderHistory", JSON.stringify(history));
+  };
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, updateCartItem, removeFromCart }}
+      value={{
+        cart,
+        addToCart,
+        updateQuantity,
+        removeFromCart,
+        calculateTotal,
+        clearCart,
+        saveOrderToHistory,
+      }}
     >
       {children}
     </CartContext.Provider>

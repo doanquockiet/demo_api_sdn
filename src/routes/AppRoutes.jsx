@@ -8,6 +8,7 @@ import AddDrink from "../components/AddDrink";
 import UpdateDrink from "../components/UpdateDrink";
 import { CartProvider } from "../context/CartContext";
 import CheckoutPage from "../pages/CheckoutPage";
+import HistoryCart from "../pages/HistoryCart";
 const AppRoutes = () => {
   return (
     <Router>
@@ -20,6 +21,7 @@ const AppRoutes = () => {
             <Route path="/update-drink/:id" element={<UpdateDrink />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/history-cart" element={<HistoryCart />} />
           </Routes>
         </AppLayout>
       </CartProvider>
