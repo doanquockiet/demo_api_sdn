@@ -6,21 +6,27 @@ import NotFound from "../pages/NotFound";
 import AppLayout from "../components/AppLayout";
 import AddDrink from "../components/AddDrink";
 import UpdateDrink from "../components/UpdateDrink";
-
+import { CartProvider } from "../context/CartContext";
+import CheckoutPage from "../pages/CheckoutPage";
+import HistoryCart from "../pages/HistoryCart";
 const AppRoutes = () => {
-    return (
-        <Router>
-            <AppLayout>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/drinks" element={<Drinks />} />
-                    <Route path="/add-drink" element={<AddDrink />} />
-                    <Route path="/update-drink/:id" element={<UpdateDrink />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
-            </AppLayout>
-        </Router>
-    );
+  return (
+    <Router>
+      <CartProvider>
+        <AppLayout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/drinks" element={<Drinks />} />
+            <Route path="/add-drink" element={<AddDrink />} />
+            <Route path="/update-drink/:id" element={<UpdateDrink />} />
+            <Route path="*" element={<NotFound />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/history-cart" element={<HistoryCart />} />
+          </Routes>
+        </AppLayout>
+      </CartProvider>
+    </Router>
+  );
 };
 
 export default AppRoutes;
