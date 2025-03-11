@@ -11,7 +11,6 @@ import { CartProvider } from "../context/CartContext";
 import CheckoutPage from "../pages/CheckoutPage"
 import HistoryCart from "../pages/HistoryCart"
 import Login from "../pages/Login";
-import DrinkDetail from "../pages/DrinkDetail";
 
 const AppRoutes = () => {
   return (
@@ -29,7 +28,6 @@ const AppRoutes = () => {
             <Route path="*" element={<NotFound />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/history-cart" element={<HistoryCart />} />
-            <Route path="/drinks/:id" element={<DrinkDetail />} />
           </Routes>
         </AppLayout>
       </CartProvider>
