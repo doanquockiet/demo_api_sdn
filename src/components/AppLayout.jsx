@@ -67,14 +67,9 @@ const AppLayout = ({ children }) => {
   const items = [
     { key: "1", label: <Link to="/">Trang Chủ</Link> },
     { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
-<<<<<<< HEAD
-    { key: "4", label: <Link to="/toppings">Toppings</Link> },
-    { key: "5", label: <Link to="/login">Login</Link> },
-
-
-];
-=======
     { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
+    { key: "8", label: <Link to="/toppings">Toppings</Link> },
+
     {
       key: "4",
       label: (
@@ -102,7 +97,7 @@ const AppLayout = ({ children }) => {
       ),
     },
   ];
->>>>>>> 6fcdcf63c84ad826e46ec849c8c1c13dfe9c1015
+
 
   return (
     <Layout className="layout">
