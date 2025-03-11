@@ -6,9 +6,12 @@ import NotFound from "../pages/NotFound";
 import AppLayout from "../components/AppLayout";
 import AddDrink from "../components/AddDrink";
 import UpdateDrink from "../components/UpdateDrink";
+import ToppingList from "../components/ToppingList";
 import { CartProvider } from "../context/CartContext";
-import CheckoutPage from "../pages/CheckoutPage";
-import HistoryCart from "../pages/HistoryCart";
+import CheckoutPage from "../pages/CheckoutPage"
+import HistoryCart from "../pages/HistoryCart"
+import Login from "../pages/Login";
+
 const AppRoutes = () => {
   return (
     <Router>
@@ -16,6 +19,9 @@ const AppRoutes = () => {
         <AppLayout>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/toppings" element={<ToppingList />} />
+            <Route path="/login" element={<Login />} />
+
             <Route path="/drinks" element={<Drinks />} />
             <Route path="/add-drink" element={<AddDrink />} />
             <Route path="/update-drink/:id" element={<UpdateDrink />} />
