@@ -1,28 +1,166 @@
-import React from "react";
-import { Layout, Menu } from "antd";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import {
+  Layout,
+  Menu,
+  Avatar,
+  Badge,
+  Modal,
+  Button,
+  List,
+  InputNumber,
+  Typography,
+  Dropdown,
+  message,
+} from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
+import { useCart } from "../context/CartContext";
 
 const { Header, Content, Footer } = Layout;
+const { Title } = Typography;
 
-const items = [
+const AppLayout = ({ children }) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { cart, removeFromCart, updateQuantity, calculateTotal } = useCart();
+  const navigate = useNavigate();
+
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+    navigate("/checkout");
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    message.success("Đăng xuất thành công!");
+    navigate("/login");
+  };
+
+  const profileMenu = (
+    <Menu>
+      {isLoggedIn ? (
+        <>
+          <Menu.Item key="1" onClick={() => navigate("/profile")}>
+            Profile
+          </Menu.Item>
+          <Menu.Item key="2" onClick={handleLogout}>
+            Đăng xuất
+          </Menu.Item>
+        </>
+      ) : (
+        <Menu.Item key="3" onClick={() => navigate("/login")}>
+          Đăng nhập
+        </Menu.Item>
+      )}
+    </Menu>
+  );
+
+  const items = [
     { key: "1", label: <Link to="/">Trang Chủ</Link> },
     { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
+<<<<<<< HEAD
     { key: "4", label: <Link to="/toppings">Toppings</Link> },
     { key: "5", label: <Link to="/login">Login</Link> },
 
 
 ];
+=======
+    { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
+    {
+      key: "4",
+      label: (
+        <Badge count={cart.length} showZero>
+          <Button
+            type="primary"
+            shape="circle"
+            icon={<ShoppingCartOutlined />}
+            onClick={showModal}
+          />
+        </Badge>
+      ),
+      style: { marginLeft: "auto" },
+    },
+    {
+      key: "5",
+      label: (
+        <Dropdown overlay={profileMenu} trigger={["click"]}>
+          <Avatar
+            size="large"
+            icon={<UserOutlined />}
+            style={{ cursor: "pointer" }}
+          />
+        </Dropdown>
+      ),
+    },
+  ];
+>>>>>>> 6fcdcf63c84ad826e46ec849c8c1c13dfe9c1015
 
-const AppLayout = ({ children }) => {
-    return (
-        <Layout className="layout">
-            <Header>
-                <Menu theme="dark" mode="horizontal" items={items} />
-            </Header>
-            <Content style={{ padding: "20px" }}>{children}</Content>
-            <Footer style={{ textAlign: "center" }}>Ant Design ©2025</Footer>
-        </Layout>
-    );
+  return (
+    <Layout className="layout">
+      <Header>
+        <Menu theme="dark" mode="horizontal" items={items} />
+      </Header>
+      <Content style={{ padding: "20px" }}>{children}</Content>
+      <Footer style={{ textAlign: "center" }}>Ant Design ©2025</Footer>
+
+      {/* Modal giỏ hàng */}
+      <Modal
+        title="Giỏ Hàng"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Đóng
+          </Button>,
+          <Button key="submit" type="primary" onClick={handleOk}>
+            Thanh Toán
+          </Button>,
+        ]}
+      >
+        <List
+          dataSource={cart}
+          renderItem={(item) => (
+            <List.Item
+              actions={[
+                <Button
+                  type="link"
+                  danger
+                  onClick={() => removeFromCart(item._id)}
+                >
+                  Xóa
+                </Button>,
+              ]}
+            >
+              <List.Item.Meta
+                avatar={<Avatar src={item.drink_image} />}
+                title={item.drink_name}
+                description={`Giá: $${item.drink_price.toFixed(2)}`}
+              />
+              <InputNumber
+                min={1}
+                defaultValue={item.quantity}
+                onChange={(value) => updateQuantity(item._id, value)}
+              />
+            </List.Item>
+          )}
+        />
+        {/* Hiển thị tổng số tiền */}
+        <div style={{ marginTop: "20px", textAlign: "right" }}>
+          <Title level={4}>Tổng cộng: ${calculateTotal().toFixed(2)}</Title>
+        </div>
+      </Modal>
+    </Layout>
+  );
 };
 
 export default AppLayout;
