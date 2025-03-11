@@ -82,7 +82,7 @@ const Home = () => {
             <Card
               hoverable
               cover={
-                <div className="card-image-container">
+                <div className="card-image-container" onClick={() => navigate(`/drinks/${drink._id}`)}>
                   <img
                     alt={drink.drink_name}
                     src={drink.drink_image}
