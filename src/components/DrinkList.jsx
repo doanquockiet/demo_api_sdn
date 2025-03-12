@@ -113,6 +113,11 @@ const DrinkList = () => {
   return (
     <div className="container">
       <h2>Danh sách đồ uống</h2>
+        <div>
+        <Button type="primary" style={{ marginBottom: "15px" }} onClick={() => navigate(`/add-drink`)}>
+                New Drink
+            </Button>
+        </div>
       <Table
         dataSource={drinks}
         columns={columns}

@@ -110,9 +110,9 @@ const AddDrink = () => {
                             <Col xs={24} sm={12}>
                                 <Form.Item name="drink_type" label="Loại Đồ Uống" rules={[{ required: true, message: "Chọn loại đồ uống" }]}>
                                     <Select placeholder="Chọn loại">
-                                        <Option value="coffee">Cà phê</Option>
-                                        <Option value="tea">Trà</Option>
-                                        <Option value="juice">Nước ép</Option>
+                                        <Option value="coffee">COFFEE</Option>
+                                        <Option value="tea">TEA</Option>
+                                        <Option value="juice">JUICE</Option>
                                     </Select>
                                 </Form.Item>
                                 <Form.Item name="drink_price" label="Giá ($)" rules={[{ required: true, message: "Nhập giá sản phẩm" }]}>

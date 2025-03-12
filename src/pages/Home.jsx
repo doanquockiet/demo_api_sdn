@@ -26,10 +26,74 @@ const { Title } = Typography;
 const Home = () => {
   const [drinks, setDrinks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { cart, addToCart, removeFromCart, updateQuantity, calculateTotal } =
-    useCart();
+  const { cart, addToCart, removeFromCart, updateQuantity, calculateTotal } = useCart();
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const navigate = useNavigate();
+  const [filters, setFilters] = useState({
+    drink_type: "",
+    min_price: "",
+    max_price: "",
+    sort: "asc", // Sắp xếp theo giá tăng dần mặc định
+  });
+
+  useEffect(() => {
+    const fetchDrinks = async () => {
+      try {
+        setLoading(true);
+
+        // Tạo query params từ state filters
+        const queryParams = new URLSearchParams(filters).toString();
+        const response = await axios.get(
+          `http://localhost:8080/api/v1/drinks/filter?${queryParams}`
+        );
+
+        setDrinks(response.data?.data || []);
+      } catch (error) {
+        message.error("Lỗi khi lấy danh sách đồ uống");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDrinks();
+  }, [filters]); // Gọi lại API khi filters thay đổi
+
+  const handleSearch = async (e) => {
+    const keyword = e.target.value;
+    setSearchKeyword(keyword);
+
+    if (!keyword) {
+      // Nếu input trống, gọi API lấy lại toàn bộ danh sách
+      try {
+        setLoading(true);
+        const response = await axios.get("http://localhost:8080/api/v1/drink/get-all-drink");
+        setDrinks(response.data?.data || []);
+      } catch (error) {
+        message.error("Lỗi khi lấy danh sách đồ uống");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // Nếu có từ khóa, thực hiện tìm kiếm
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/drinks/search?keyword=${keyword}`
+      );
+      setDrinks(response.data?.data || []);
+    } catch (error) {
+      message.error("Lỗi khi tìm kiếm đồ uống");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     const fetchDrinks = async () => {
@@ -74,6 +138,78 @@ const Home = () => {
         <Title level={2} style={{ fontWeight: "bold", margin: 0 }}>
           Danh Sách Đồ Uống
         </Title>
+        <div>
+          <input
+            type="text"
+            placeholder="Tìm kiếm đồ uống..."
+            value={searchKeyword}
+            onChange={handleSearch} // Cập nhật khi nhập
+            style={{ padding: "5px", borderRadius: "5px", width: "200px" }}
+          />
+
+          <Button style={{ marginLeft: 20 }} type="primary" onClick={handleSearch}>
+            Tìm kiếm
+          </Button>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          {/* Chọn loại đồ uống */}
+          <select
+            value={filters.drink_type}
+            onChange={(e) => setFilters({ ...filters, drink_type: e.target.value })}
+            style={{ padding: "5px 10px", borderRadius: "5px" }}
+          >
+            <option value="">Tất cả loại</option>
+            <option value="coffee">Cà phê</option>
+            <option value="tea">Trà</option>
+            <option value="smoothie">Sinh tố</option>
+          </select>
+
+          {/* Nhập khoảng giá */}
+          <input
+            type="number"
+            placeholder="Giá tối thiểu"
+            value={filters.min_price}
+            onChange={(e) => setFilters({ ...filters, min_price: e.target.value })}
+            style={{ padding: "5px", borderRadius: "5px", width: "100px" }}
+          />
+          <input
+            type="number"
+            placeholder="Giá tối đa"
+            value={filters.max_price}
+            onChange={(e) => setFilters({ ...filters, max_price: e.target.value })}
+            style={{ padding: "5px", borderRadius: "5px", width: "100px" }}
+          />
+
+          {/* Sắp xếp theo giá */}
+          <select
+            value={filters.sort}
+            onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
+            style={{ padding: "5px 10px", borderRadius: "5px" }}
+          >
+            <option value="asc">Giá thấp - cao</option>
+            <option value="desc">Giá cao - thấp</option>
+          </select>
+
+          {/* Nút Reset */}
+          <Button
+            onClick={() =>
+              setFilters({ drink_type: "", min_price: "", max_price: "", sort: "asc" })
+            }
+            type="default"
+          >
+            Reset
+          </Button>
+        </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "30px",
+        }}
+      >
       </div>
 
       <Row gutter={[24, 24]} justify="center">
@@ -81,6 +217,7 @@ const Home = () => {
           <Col xs={24} sm={12} md={8} lg={6} key={drink._id}>
             <Card
               hoverable
+              className="drink-card"
               cover={
                 <div className="card-image-container" onClick={() => navigate(`/drinks/${drink._id}`)}>
                   <img
@@ -89,33 +226,23 @@ const Home = () => {
                     className="card-image"
                   />
                   <div className="overlay">
-                    <Button
-                      type="primary"
-                      icon={<ShoppingCartOutlined />}
-                      className="btn-hover"
-                      onClick={() => addToCart(drink)}
-                    >
+                    <Button type="primary" icon={<ShoppingCartOutlined />} className="btn-hover" onClick={() => addToCart(drink)}>
                       Thêm vào giỏ
                     </Button>
                   </div>
                 </div>
               }
-              className="drink-card"
             >
-              <Meta
-                title={<span className="drink-title">{drink.drink_name}</span>}
-                description={
-                  <p className="drink-description">{drink.drink_description}</p>
-                }
-              />
-              <p className="drink-price">
-                Giá: ${drink.drink_price.toFixed(2)}
-              </p>
-              <Tag className="drink-tag">{drink.drink_type.toUpperCase()}</Tag>
+              <div className="card-content">
+                <Meta title={<span className="drink-title">{drink.drink_name}</span>} description={<p className="drink-description">{drink.drink_description}</p>} />
+                <p className="drink-price">Giá: ${drink.drink_price.toFixed(2)}</p>
+                <Tag className="drink-tag">{drink.drink_type.toUpperCase()}</Tag>
+              </div>
             </Card>
           </Col>
         ))}
       </Row>
+
 
       <Modal
         title="Giỏ Hàng"
@@ -206,34 +333,41 @@ const Home = () => {
           }
 
           .drink-card {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-          }
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-          .drink-title {
-            font-weight: bold;
-            font-size: 16px;
-          }
+.drink-card .ant-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-          .drink-description {
-            font-size: 13px;
-            color: #555;
-            margin-bottom: 5px;
-          }
+.card-content {
+  flex: 1;
+}
 
-          .drink-price {
-            margin-top: 10px;
-            font-size: 15px;
-            font-weight: bold;
-            color: #ff4d4f;
-          }
+.drink-title {
+  font-weight: bold;
+  font-size: 16px;
+}
 
-          .drink-tag {
-            font-size: 13px;
-            padding: 5px 10px;
-            border-radius: 5px;
-          }
+.drink-description {
+  font-size: 13px;
+  color: #555;
+  flex-grow: 1;
+}
+
+.drink-price {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #ff4d4f;
+}
+
         `}
       </style>
     </div>
