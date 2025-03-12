@@ -219,8 +219,12 @@ const Home = () => {
               hoverable
               className="drink-card"
               cover={
-                <div className="card-image-container">
-                  <img alt={drink.drink_name} src={drink.drink_image} className="card-image" />
+                <div className="card-image-container" onClick={() => navigate(`/drinks/${drink._id}`)}>
+                  <img
+                    alt={drink.drink_name}
+                    src={drink.drink_image}
+                    className="card-image"
+                  />
                   <div className="overlay">
                     <Button type="primary" icon={<ShoppingCartOutlined />} className="btn-hover" onClick={() => addToCart(drink)}>
                       Thêm vào giỏ
