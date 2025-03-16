@@ -11,7 +11,7 @@ import { CartProvider } from "../context/CartContext";
 import CheckoutPage from "../pages/CheckoutPage"
 import HistoryCart from "../pages/HistoryCart"
 import Login from "../pages/Login";
-import DrinkDetail from "../pages/DrinkDetail";
+import DrinkDetail from "../pages/DrinkDetails";
 
 const AppRoutes = () => {
   return (
