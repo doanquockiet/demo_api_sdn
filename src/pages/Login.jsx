@@ -16,19 +16,20 @@ const Login = () => {
         email: "",
     });
     const [loginForm, setLoginForm] = useState({
-        email: "",
+        user_name: "",
         password: "",
     });
 
     const handleLogin = async () => {
         try {
             const res = await axios.post(
-                "http://localhost:8080/api/v1/auth/authenticate",
+                "http://localhost:8080/api/v1/auth/login",
                 loginForm
             );
             message.success("Đăng nhập thành công!");
-            // Lưu token vào local storage hoặc cookies
+            // Lưu token và role vào local storage
             localStorage.setItem("token", res.data.token);
+            localStorage.setItem("role", res.data.role); // Lưu role
             // Chuyển hướng đến trang chính
             navigate("/");
         } catch (err) {
@@ -60,8 +61,8 @@ const Login = () => {
                     placeholder="Tên đăng nhập"
                     type="email"
                     className="login-input"
-                    value={loginForm.email}
-                    onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+                    value={loginForm.user_name}
+                    onChange={(e) => setLoginForm({ ...loginForm, user_name: e.target.value })}
                 />
                 <Input
                     placeholder="Mật khẩu"
