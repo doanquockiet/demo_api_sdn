@@ -12,6 +12,8 @@ import CheckoutPage from "../pages/CheckoutPage"
 import HistoryCart from "../pages/HistoryCart"
 import Login from "../pages/Login";
 import DrinkDetail from "../pages/DrinkDetails";
+import VerifyEmail from "../components/VerifyEmail";
+import ForgotPassword from "../components/ForgotPassword";
 
 const AppRoutes = () => {
   return (
@@ -22,8 +24,10 @@ const AppRoutes = () => {
             <Route path="/" element={<Home />} />
             <Route path="/toppings" element={<ToppingList />} />
             <Route path="/login" element={<Login />} />
-
+            <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/drinks" element={<Drinks />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+
             <Route path="/add-drink" element={<AddDrink />} />
             <Route path="/update-drink/:id" element={<UpdateDrink />} />
             <Route path="*" element={<NotFound />} />
