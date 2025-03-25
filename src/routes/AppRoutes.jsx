@@ -67,6 +67,14 @@ const AppRoutes = () => {
 
             <Route path="/drinks/:id" element={<DrinkDetail />} />
             <Route path="*" element={<NotFound />} />
+            <Route
+              path="/export*"
+              element={
+                <PrivateRoute allowedRoles={["staff"]}>
+                  <ExportRoutes />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </AppLayout>
       </CartProvider>

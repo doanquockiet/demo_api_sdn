@@ -17,7 +17,16 @@ import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { useCart } from "../context/CartContext";
 
 const { Header, Content, Footer } = Layout;
+
+const items = [
+    { key: "1", label: <Link to="/">Trang Chủ</Link> },
+    { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
+    { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
+    { key: "7", label: <Link to="/export">Thống Kê Xuất</Link> },
+
+];
 const { Title } = Typography;
+
 
 const AppLayout = ({ children }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -77,6 +86,9 @@ const AppLayout = ({ children }) => {
         { key: "3", label: <Link to="/ratingStatic">Thống Kê Đánh Giá</Link> },
         { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
         { key: "8", label: <Link to="/toppings">Toppings</Link> },
+        { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
+        { key: "4", label: <Link to="/export">Xuất Thống Kê</Link> },
+        // { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
       ]
       : []),
     {
