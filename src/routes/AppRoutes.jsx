@@ -15,6 +15,7 @@ import DrinkDetail from "../pages/DrinkDetails";
 import VerifyEmail from "../components/VerifyEmail";
 import ForgotPassword from "../components/ForgotPassword";
 import PrivateRoute from "./PrivateRoute";
+import RatingStatistics from "../components/RatingStatistics";
 
 const AppRoutes = () => {
   return (
@@ -62,6 +63,7 @@ const AppRoutes = () => {
                 </PrivateRoute>
               }
             />
+            <Route path="/ratingStatic" element={<RatingStatistics />} />
 
             <Route path="/drinks/:id" element={<DrinkDetail />} />
             <Route path="*" element={<NotFound />} />
