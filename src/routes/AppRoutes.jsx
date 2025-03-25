@@ -17,6 +17,7 @@ import ForgotPassword from "../components/ForgotPassword";
 import PrivateRoute from "./PrivateRoute";
 import RatingStatistics from "../components/RatingStatistics";
 import ExportRoutes from "../pages/ExportPages/ExportRoutes";
+import ConfirmOrder from "../pages/ConfirmOrder";
 import Profile from "../pages/Profile";
 import OrderHistory from "../components/OrderHistory";
 
@@ -79,6 +80,14 @@ const AppRoutes = () => {
               }
             />
             <Route
+              path="/confirmOrder*"
+              element={
+                <PrivateRoute allowedRoles={["staff"]}>
+                  <ConfirmOrder />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/profile"
               element={
                 <PrivateRoute allowedRoles={["customer", "staff"]}>
@@ -95,6 +104,7 @@ const AppRoutes = () => {
               }
             />
           </Routes>
+
         </AppLayout>
       </CartProvider>
     </Router>
