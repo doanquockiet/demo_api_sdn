@@ -17,7 +17,7 @@ import ForgotPassword from "../components/ForgotPassword";
 import PrivateRoute from "./PrivateRoute";
 import RatingStatistics from "../components/RatingStatistics";
 import ExportRoutes from "../pages/ExportPages/ExportRoutes";
-
+import ConfirmOrder from "../pages/ConfirmOrder"
 const AppRoutes = () => {
   return (
     <Router>
@@ -76,7 +76,16 @@ const AppRoutes = () => {
                 </PrivateRoute>
               }
             />
+            <Route
+              path="/confirmOrder*"
+              element={
+                <PrivateRoute allowedRoles={["staff"]}>
+                  <ConfirmOrder />
+                </PrivateRoute>
+              }
+            />
           </Routes>
+
         </AppLayout>
       </CartProvider>
     </Router>
