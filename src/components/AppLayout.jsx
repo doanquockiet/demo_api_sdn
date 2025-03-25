@@ -76,6 +76,8 @@ const AppLayout = ({ children }) => {
   const items = [
     { key: "1", label: <Link to="/">Trang Chủ</Link> },
     { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
+
+    { key: "4", label: <Link to="/export">Xuất Thống Kê</Link> },
     // { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
     { key: "8", label: <Link to="/toppings">Toppings</Link> },
 

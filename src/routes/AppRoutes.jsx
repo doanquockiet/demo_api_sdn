@@ -15,6 +15,7 @@ import DrinkDetail from "../pages/DrinkDetails";
 import VerifyEmail from "../components/VerifyEmail";
 import ForgotPassword from "../components/ForgotPassword";
 import PrivateRoute from "./PrivateRoute";
+import ExportRoutes from "../pages/ExportPages/ExportRoutes";
 
 const AppRoutes = () => {
   return (
@@ -65,6 +66,14 @@ const AppRoutes = () => {
 
             <Route path="/drinks/:id" element={<DrinkDetail />} />
             <Route path="*" element={<NotFound />} />
+            <Route
+              path="/export*"
+              element={
+                <PrivateRoute allowedRoles={["customer"]}>
+                  <ExportRoutes />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </AppLayout>
       </CartProvider>

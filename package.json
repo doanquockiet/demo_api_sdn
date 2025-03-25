@@ -10,25 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "antd": "^5.24.2",
-    "axios": "^1.8.1",
-    "dayjs": "^1.11.13",
-    "my-antd-app": "file:",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^7.2.0"
-=======
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@react-oauth/google": "^0.12.1",
     "antd": "^5.24.4",
     "axios": "^1.7.9",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
+    "my-antd-app": "file:",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.30.0"
->>>>>>> f6adb091b4119414a640aab54469f17ea7e1c392
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

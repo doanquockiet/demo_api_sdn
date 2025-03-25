@@ -4,7 +4,6 @@ import { Dropdown, Menu, Layout, Card, Space, Typography } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import ThongKeDonHang from "./OrderStatistics";
 import ThongKeSanPham from "./ThongKeSanPham";
-import ThongKeKhachHang from "./ThongKeKhachHang";
 import ThongKeDanhGia from "./ThongKeDanhGia";
 
 const { Content } = Layout;
@@ -31,7 +30,6 @@ const ExportRoutes = () => {
     <Menu onClick={handleMenuClick}>
       <Menu.Item key="/export/don-hang">📦 Thống Kê Đơn Hàng</Menu.Item>
       <Menu.Item key="/export/san-pham">🛒 Thống Kê Sản Phẩm</Menu.Item>
-      <Menu.Item key="/export/khach-hang">👥 Thống Kê Khách Hàng</Menu.Item>
       <Menu.Item key="/export/danh-gia">⭐ Thống Kê Đánh Giá</Menu.Item>
     </Menu>
   );
@@ -56,7 +54,6 @@ const ExportRoutes = () => {
           <Routes>
             <Route path="/don-hang" element={<ThongKeDonHang />} />
             <Route path="/san-pham" element={<ThongKeSanPham />} />
-            <Route path="/khach-hang" element={<ThongKeKhachHang />} />
             <Route path="/danh-gia" element={<ThongKeDanhGia />} />
           </Routes>
         </div>
