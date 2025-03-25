@@ -23,8 +23,9 @@ const AppLayout = ({ children }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { cart, removeFromCart, updateQuantity, calculateTotal } = useCart();
   const navigate = useNavigate();
-
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+  const isLoggedIn = !!token;
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -40,20 +41,22 @@ const AppLayout = ({ children }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
     message.success("Đăng xuất thành công!");
     navigate("/login");
   };
+
 
   const profileMenu = (
     <Menu>
       {isLoggedIn ? (
         <>
-          <Menu.Item key="1" onClick={() => navigate("/profile")}>
-            Profile
-          </Menu.Item>
           <Menu.Item key="2" onClick={handleLogout}>
             Đăng xuất
+          </Menu.Item>
+          <Menu.Item key="3">
+            Profile
           </Menu.Item>
         </>
       ) : (
@@ -64,14 +67,18 @@ const AppLayout = ({ children }) => {
     </Menu>
   );
 
+
   const items = [
     { key: "1", label: <Link to="/">Trang Chủ</Link> },
-    { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
-    { key: "3", label: <Link to="/ratingStatic">Thống Kê Đánh Giá</Link> },
-
-    // { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
-    { key: "8", label: <Link to="/toppings">Toppings</Link> },
-
+    // ✅ Hiển thị thêm nếu là nhân viên (staff)
+    ...(role === "staff"
+      ? [
+        { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
+        { key: "3", label: <Link to="/ratingStatic">Thống Kê Đánh Giá</Link> },
+        { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
+        { key: "8", label: <Link to="/toppings">Toppings</Link> },
+      ]
+      : []),
     {
       key: "4",
       label: (
@@ -99,6 +106,7 @@ const AppLayout = ({ children }) => {
       ),
     },
   ];
+
 
 
   return (

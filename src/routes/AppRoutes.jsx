@@ -28,11 +28,11 @@ const AppRoutes = () => {
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/drinks" element={<Drinks />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/toppings" element={<ToppingList />} />
             <Route
               path="/add-drink"
               element={
                 <PrivateRoute allowedRoles={["staff"]}>
-                  <Route path="/toppings" element={<ToppingList />} />
                   <AddDrink />
                 </PrivateRoute>
               }
