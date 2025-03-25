@@ -15,7 +15,7 @@ import DrinkDetail from "../pages/DrinkDetails";
 import VerifyEmail from "../components/VerifyEmail";
 import ForgotPassword from "../components/ForgotPassword";
 import PrivateRoute from "./PrivateRoute";
-import ExportRoutes from "../pages/ExportPages/ExportRoutes";
+import RatingStatistics from "../components/RatingStatistics";
 
 const AppRoutes = () => {
   return (
@@ -63,13 +63,14 @@ const AppRoutes = () => {
                 </PrivateRoute>
               }
             />
+            <Route path="/ratingStatic" element={<RatingStatistics />} />
 
             <Route path="/drinks/:id" element={<DrinkDetail />} />
             <Route path="*" element={<NotFound />} />
             <Route
               path="/export*"
               element={
-                <PrivateRoute allowedRoles={["customer"]}>
+                <PrivateRoute allowedRoles={["staff"]}>
                   <ExportRoutes />
                 </PrivateRoute>
               }

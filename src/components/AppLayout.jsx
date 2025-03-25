@@ -82,6 +82,8 @@ const AppLayout = ({ children }) => {
     // ✅ Hiển thị thêm nếu là nhân viên (staff)
     ...(role === "staff"
       ? [
+        { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
+        { key: "3", label: <Link to="/ratingStatic">Thống Kê Đánh Giá</Link> },
         { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
         { key: "8", label: <Link to="/toppings">Toppings</Link> },
         { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
@@ -89,7 +91,6 @@ const AppLayout = ({ children }) => {
         // { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
       ]
       : []),
-
     {
       key: "4",
       label: (
