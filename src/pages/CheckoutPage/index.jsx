@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { Input, Button, Radio, Form, message, Row, Col } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import "./styles.css";
 
 const Index = () => {
@@ -14,6 +15,44 @@ const Index = () => {
   });
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        message.error("Vui lòng đăng nhập để thanh toán!");
+        navigate("/login");
+        return;
+      }
+
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.userId;
+
+      const response = await axios.get(
+        `http://localhost:8080/api/v1/profile/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data) {
+        setCustomerInfo({
+          full_name: response.data.full_name || "",
+          address: response.data.address || "",
+          phone_number: response.data.phone_number || "",
+        });
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin người dùng:", error);
+      message.error("Không thể lấy thông tin người dùng!");
+    }
+  };
 
   const totalAmount = cart.reduce(
     (sum, item) => sum + item.drink_price * item.quantity,
@@ -31,36 +70,47 @@ const Index = () => {
       !customerInfo.address ||
       !customerInfo.phone_number
     ) {
-      message.error("Please fill in all customer information!");
+      message.error("Vui lòng điền đầy đủ thông tin!");
       return;
     }
-    const orderData = {
-      cus_id: "CUS_123",
-      staff_id: "STAFF_001",
-      order_description: cart
-        .map((item) => `${item.drink_name} x${item.quantity}`)
-        .join(", "),
-      total_price: totalAmount,
-      customer_info: {
-        fullName: customerInfo.full_name,
-        address: customerInfo.address,
-        phoneNumber: customerInfo.phone_number,
-      },
-    };
-
-    console.log("Order Data:", orderData);
 
     try {
+      const token = localStorage.getItem("token");
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.userId;
+
+      const orderData = {
+        cus_id: userId,
+        order_description: cart
+          .map((item) => `${item.drink_name} x${item.quantity}`)
+          .join(", "),
+        total_price: totalAmount,
+        customer_info: {
+          fullName: customerInfo.full_name,
+          address: customerInfo.address,
+          phoneNumber: customerInfo.phone_number,
+        },
+      };
+
+      console.log("Order Data Sent:", JSON.stringify(orderData, null, 2));
+
       if (paymentMethod === "cash") {
         const response = await axios.post(
           "http://localhost:8080/api/v1/payment/cash",
-          orderData
+          orderData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        console.log("Success response:", response);
-        message.success(response.data.message);
-        saveOrderToHistory(orderData);
-        clearCart();
-        navigate("/history-cart");
+
+        if (response.data) {
+          message.success("Đặt hàng thành công!");
+          saveOrderToHistory(orderData);
+          clearCart();
+          navigate("/order-history");
+        }
       } else {
         // Phần xử lý PayPal
       }
@@ -69,7 +119,9 @@ const Index = () => {
       if (error.response) {
         console.error("Response data:", error.response.data);
         console.error("Response status:", error.response.status);
-        message.error("Paid error: " + error.response.data.message);
+        message.error(
+          error.response.data.message || "Có lỗi xảy ra khi đặt hàng!"
+        );
       } else if (error.request) {
         console.error("Request was made but no response received");
         message.error("Không nhận được phản hồi từ máy chủ. Vui lòng thử lại.");
@@ -85,10 +137,10 @@ const Index = () => {
       <Row gutter={[24, 24]} style={{ display: "flex", flexWrap: "nowrap" }}>
         <Col xs={24} md={12} style={{ flex: 1, marginRight: 24 }}>
           <div className="checkout-container cart">
-            <h2>Cart</h2>
+            <h2>Giỏ Hàng</h2>
             <Form>
               {cart.map((item) => (
-                <div key={item.drink_id} className="cart-item">
+                <div key={item._id} className="cart-item">
                   <img
                     style={{ width: 100 }}
                     src={item.drink_image}
@@ -105,41 +157,41 @@ const Index = () => {
 
         <Col xs={24} md={12} style={{ flex: 1 }}>
           <div className="checkout-container information">
-            <h2>Information</h2>
+            <h2>Thông Tin Thanh Toán</h2>
             <Form layout="vertical">
-              <Form.Item label="Full Name">
+              <Form.Item label="Họ Tên">
                 <Input
                   name="full_name"
                   value={customerInfo.full_name}
                   onChange={handleInputChange}
                 />
               </Form.Item>
-              <Form.Item label="Address">
+              <Form.Item label="Địa Chỉ">
                 <Input
                   name="address"
                   value={customerInfo.address}
                   onChange={handleInputChange}
                 />
               </Form.Item>
-              <Form.Item label="Phone Number">
+              <Form.Item label="Số Điện Thoại">
                 <Input
                   name="phone_number"
                   value={customerInfo.phone_number}
                   onChange={handleInputChange}
                 />
               </Form.Item>
-              <Form.Item label="Payment Method">
+              <Form.Item label="Phương Thức Thanh Toán">
                 <Radio.Group
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 >
-                  <Radio value="cash">Cash</Radio>
+                  <Radio value="cash">Tiền Mặt</Radio>
                   <Radio value="paypal">PayPal</Radio>
                 </Radio.Group>
               </Form.Item>
-              <h3>Sumary: ${totalAmount.toFixed(2)}</h3>
+              <h3>Tổng Tiền: ${totalAmount.toFixed(2)}</h3>
               <Button type="primary" block onClick={handlePayment}>
-                Check Out
+                Thanh Toán
               </Button>
             </Form>
           </div>
