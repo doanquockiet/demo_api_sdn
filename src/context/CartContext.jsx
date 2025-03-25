@@ -6,8 +6,9 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
-  //Lấy giỏ hàng từ localStorage khi ứng dụng khởi chạy
+  //Lấy giỏ hàng từ localStorage và sessionStorage khi ứng dụng khởi chạy
   useEffect(() => {
+    // Lấy từ localStorage
     const storedCart = localStorage.getItem("cart");
     const storedTimestamp = localStorage.getItem("cartTimestamp");
 
@@ -22,12 +23,19 @@ export const CartProvider = ({ children }) => {
         localStorage.removeItem("cartTimestamp");
       }
     }
+
+    // Lấy từ sessionStorage
+    const sessionCart = sessionStorage.getItem("cart");
+    if (sessionCart) {
+      setCart(JSON.parse(sessionCart));
+    }
   }, []);
 
-  // Hàm lưu giỏ hàng vào localStorage
-  const saveCartToLocalStorage = (cart) => {
+  // Hàm lưu giỏ hàng vào localStorage và sessionStorage
+  const saveCartToStorage = (cart) => {
     localStorage.setItem("cart", JSON.stringify(cart));
     localStorage.setItem("cartTimestamp", new Date().getTime().toString());
+    sessionStorage.setItem("cart", JSON.stringify(cart));
   };
 
   // Thêm sản phẩm vào giỏ hàng
@@ -44,7 +52,7 @@ export const CartProvider = ({ children }) => {
       } else {
         updatedCart = [...prevCart, { ...product, quantity: 1 }];
       }
-      saveCartToLocalStorage(updatedCart);
+      saveCartToStorage(updatedCart);
       return updatedCart;
     });
   };
@@ -55,7 +63,7 @@ export const CartProvider = ({ children }) => {
       const updatedCart = prevCart.map((item) =>
         item._id === productId ? { ...item, quantity } : item
       );
-      saveCartToLocalStorage(updatedCart);
+      saveCartToStorage(updatedCart);
       return updatedCart;
     });
   };
@@ -64,10 +72,11 @@ export const CartProvider = ({ children }) => {
   const removeFromCart = (productId) => {
     setCart((prevCart) => {
       const updatedCart = prevCart.filter((item) => item._id !== productId);
-      saveCartToLocalStorage(updatedCart);
+      saveCartToStorage(updatedCart);
       return updatedCart;
     });
   };
+
   const calculateTotal = () => {
     return cart.reduce(
       (total, item) => total + item.drink_price * item.quantity,
@@ -77,6 +86,9 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => {
     setCart([]); // Xóa toàn bộ giỏ hàng
+    localStorage.removeItem("cart");
+    localStorage.removeItem("cartTimestamp");
+    sessionStorage.removeItem("cart");
   };
 
   // Lưu đơn hàng vào lịch sử
@@ -85,6 +97,7 @@ export const CartProvider = ({ children }) => {
     history.push(order);
     localStorage.setItem("orderHistory", JSON.stringify(history));
   };
+
   return (
     <CartContext.Provider
       value={{
