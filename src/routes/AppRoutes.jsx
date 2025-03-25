@@ -84,9 +84,10 @@ const AppRoutes = () => {
               element={
                 <PrivateRoute allowedRoles={["staff"]}>
                   <ConfirmOrder />
-                   }
-             />
-             <Route
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/profile"
               element={
                 <PrivateRoute allowedRoles={["customer", "staff"]}>
