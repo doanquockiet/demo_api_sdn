@@ -10,7 +10,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
     const modalShown = useRef(false); // Sử dụng useRef để theo dõi trạng thái modal
 
     useEffect(() => {
-        if (!token && !allowedRoles.includes(role) && !modalShown.current) {
+        if ((!token || !allowedRoles.includes(role)) && !modalShown.current) {
             modalShown.current = true; // Đánh dấu modal đã được hiển thị
             Modal.confirm({
                 title: 'Thông báo',
