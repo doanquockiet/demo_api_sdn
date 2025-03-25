@@ -8,6 +8,8 @@ const items = [
     { key: "1", label: <Link to="/">Trang Chủ</Link> },
     { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
     { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
+    { key: "7", label: <Link to="/export">Thống Kê Xuất</Link> },
+
 ];
 
 const AppLayout = ({ children }) => {
