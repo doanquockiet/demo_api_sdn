@@ -16,6 +16,7 @@ import VerifyEmail from "../components/VerifyEmail";
 import ForgotPassword from "../components/ForgotPassword";
 import PrivateRoute from "./PrivateRoute";
 import RatingStatistics from "../components/RatingStatistics";
+import ExportRoutes from "../pages/ExportPages/ExportRoutes";
 
 const AppRoutes = () => {
   return (
