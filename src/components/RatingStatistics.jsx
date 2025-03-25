@@ -134,7 +134,14 @@ class RatingStatistics extends Component {
     const currentYear = new Date().getFullYear();
 
     return (
-      <div style={{ padding: "20px", maxWidth: "1200px", margin: "auto" }}>
+      <div
+        style={{
+          padding: "20px",
+          maxWidth: "1200px",
+          margin: "auto",
+          paddingBottom: "80px",
+        }}
+      >
         <Title level={2} style={{ textAlign: "center" }}>
           📊 Thống kê Đánh Giá
         </Title>
