@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Button, Typography, Tag, message, Spin, Input, Rate } from "antd";
+import { Card, Button, Typography, Tag, message, Spin, Input, Rate, Checkbox } from "antd";
 import axios from "axios";
 import { useCart } from "../../context/CartContext";
 import { ShoppingCartOutlined } from "@ant-design/icons";
@@ -20,7 +20,7 @@ const DrinkDetail = () => {
     const [submitting, setSubmitting] = useState(false);
     const [ratings, setRatings] = useState([]);
     const [loadingRatings, setLoadingRatings] = useState(true);
-
+    const [selectedToppings, setSelectedToppings] = useState([]);
     useEffect(() => {
         const fetchDrinkDetail = async () => {
             try {
@@ -102,6 +102,21 @@ const DrinkDetail = () => {
     if (!drink) {
         return <p>Không tìm thấy đồ uống.</p>;
     }
+    const handleToppingChange = (toppingId) => {
+        setSelectedToppings((prevSelected) =>
+            prevSelected.includes(toppingId)
+                ? prevSelected.filter((id) => id !== toppingId) // Bỏ chọn nếu đã chọn trước đó
+                : [...prevSelected, toppingId] // Thêm vào danh sách nếu chưa chọn
+        );
+    };
+    const handleAddToCart = () => {
+        const drinkWithToppings = {
+            ...drink,
+            selectedToppings: drink.toppings.filter((topping) => selectedToppings.includes(topping._id)), // Lấy thông tin toppings đã chọn
+        };
+        addToCart(drinkWithToppings);
+        message.success("Đã thêm vào giỏ hàng!");
+    };
     return (
         <div className="container">
             <div className="drink-detail-card">
@@ -118,8 +133,23 @@ const DrinkDetail = () => {
                             Giá: ${drink.drink_price.toFixed(2)}
                         </Title>
                         <Tag className="drink-tag">{drink.drink_type.toUpperCase()}</Tag>
+                        {drink.toppings && drink.toppings.length > 0 && (
+                            <div className="topping-section">
+                                <Title level={4}>Chọn Topping</Title>
+                                {drink.toppings.map((topping) => (
+                                    <div key={topping._id} className="topping-item">
+                                        <Checkbox
+                                            onChange={() => handleToppingChange(topping._id)}
+                                            checked={selectedToppings.includes(topping._id)}
+                                        >
+                                            {topping.topping_name} (+${topping.topping_price})
+                                        </Checkbox>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                         <div className="button-group">
-                            <Button type="primary" icon={<ShoppingCartOutlined />} onClick={() => addToCart(drink)}>
+                            <Button type="primary" icon={<ShoppingCartOutlined />} onClick={handleAddToCart}>
                                 Thêm vào giỏ
                             </Button>
                         </div>
@@ -267,6 +297,16 @@ const DrinkDetail = () => {
 
                 .back-button:hover {
                     background-color: darkred;
+                }
+                     .topping-section {
+                    padding: 10px;
+                    border-radius: 8px;
+                }
+
+                .topping-item {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 8px;
                 }
                 `}
             </style>

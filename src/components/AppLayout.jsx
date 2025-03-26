@@ -58,10 +58,19 @@ const AppLayout = ({ children }) => {
     <Menu>
       {isLoggedIn ? (
         <>
+          <Menu.Item onClick={() => navigate("/profile")} key="3">
+            Profile
+          </Menu.Item>
+
+          {/* ✅ Hiển thị thêm nếu là nhân viên (customer ) */}
+          {role === "customer" && (
+            <Menu.Item onClick={() => navigate("/order-history")} key="4">
+              Lịch sử mua hàng
+            </Menu.Item>
+          )}
           <Menu.Item key="2" onClick={handleLogout}>
             Đăng xuất
           </Menu.Item>
-          <Menu.Item key="3">Profile</Menu.Item>
         </>
       ) : (
         <Menu.Item key="3" onClick={() => navigate("/login")}>
@@ -76,35 +85,41 @@ const AppLayout = ({ children }) => {
     // ✅ Hiển thị thêm nếu là nhân viên (staff)
     ...(role === "staff"
       ? [
-          {
-            key: "5",
-            label: <Link to="/ratingStatic">Thống Kê Đánh Giá</Link>,
-          },
-          { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
-          { key: "8", label: <Link to="/toppings">Toppings</Link> },
-          { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
-          { key: "4", label: <Link to="/export">Xuất Thống Kê</Link> },
-          { key: "6", label: <Link to="/orderStaic">Thống Kê Đơn Hang</Link> },
+        { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
+        { key: "8", label: <Link to="/toppings">Toppings</Link> },
+        {
+          key: "6",
+          label: <Link to="/ratingStatic">Thống Kê Đánh Giá</Link>,
+        },
+        { key: "7", label: <Link to="/export">Xuất Thống Kê</Link> },
+        { key: "5", label: <Link to="/confirmOrder">Xác nhận đơn</Link> },
+        { key: "9", label: <Link to="/orderStatic">Xác nhận đơn</Link> },
 
-          // { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
+        // { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
+      ]
+
+      : []),
+    // ✅ Hiển thị thêm nếu là khách hàng (customer)
+    ...(role === "customer"
+      ? [
+          {
+            key: "4",
+            label: (
+              <Badge count={cart.length} showZero>
+                <Button
+                  type="primary"
+                  shape="circle"
+                  icon={<ShoppingCartOutlined />}
+                  onClick={showModal}
+                />
+              </Badge>
+            ),
+            style: { marginLeft: "auto" },
+          },
         ]
       : []),
     {
-      key: "4",
-      label: (
-        <Badge count={cart.length} showZero>
-          <Button
-            type="primary"
-            shape="circle"
-            icon={<ShoppingCartOutlined />}
-            onClick={showModal}
-          />
-        </Badge>
-      ),
-      style: { marginLeft: "auto" },
-    },
-    {
-      key: "5",
+      key: "8",
       label: (
         <Dropdown overlay={profileMenu} trigger={["click"]}>
           <Avatar

@@ -18,6 +18,10 @@ import PrivateRoute from "./PrivateRoute";
 import RatingStatistics from "../components/RatingStatistics";
 import ExportRoutes from "../pages/ExportPages/ExportRoutes";
 import OrderStatistics from "../components/OrderStatistics";
+import ConfirmOrder from "../pages/ConfirmOrder";
+import Profile from "../pages/Profile";
+import OrderHistory from "../components/OrderHistory";
+
 
 const AppRoutes = () => {
   return (
@@ -65,8 +69,14 @@ const AppRoutes = () => {
                 </PrivateRoute>
               }
             />
-            <Route path="/ratingStatic" element={<RatingStatistics />} />
-
+            <Route
+              path="/ratingStatic"
+              element={
+                <PrivateRoute allowedRoles={["staff"]}>
+                  <RatingStatistics />
+                </PrivateRoute>
+              }
+            />
             <Route path="/drinks/:id" element={<DrinkDetail />} />
             <Route path="*" element={<NotFound />} />
             <Route
@@ -77,8 +87,41 @@ const AppRoutes = () => {
                 </PrivateRoute>
               }
             />
-            <Route path="/orderStaic" element={<OrderStatistics />} />
+
+            <Route
+              path="/orderStaic*"
+              element={
+                <PrivateRoute allowedRoles={["staff"]}>
+                  <OrderStatistics />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/confirmOrder*"
+              element={
+                <PrivateRoute allowedRoles={["staff"]}>
+                  <ConfirmOrder />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute allowedRoles={["customer", "staff"]}>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/order-history"
+              element={
+                <PrivateRoute allowedRoles={["customer"]}>
+                  <OrderHistory />
+                </PrivateRoute>
+              }
+            />
           </Routes>
+
         </AppLayout>
       </CartProvider>
     </Router>
