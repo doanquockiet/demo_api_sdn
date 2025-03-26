@@ -17,7 +17,6 @@ const GoogleAuth = () => {
 
             const { name, email, picture, sub } = userData;
 
-
             const res = await axios.post("http://localhost:8080/api/v1/auth/loginByGoogle", {
                 user_name: name,
                 full_name: name,
@@ -27,9 +26,19 @@ const GoogleAuth = () => {
             });
 
             console.log("Server Response:", res.data);
+
             if (res.data.success && res.data.data.token) {
                 message.success("Đăng nhập thành công!");
-                Cookies.set("token", res.data.data.token, { expires: 1 });
+
+                const token = res.data.data.token;
+
+                // ✅ Lưu token và role vào localStorage
+                localStorage.setItem("token", token);
+                localStorage.setItem("role", "customer"); // hoặc lấy từ server nếu có
+
+                // (tùy chọn) nếu bạn vẫn dùng cookie:
+                // Cookies.set("token", token, { expires: 1 });
+
                 navigate("/");
             } else {
                 message.error("Lỗi: Token không tồn tại!");
@@ -39,6 +48,7 @@ const GoogleAuth = () => {
             message.error("Đăng nhập thất bại!");
         }
     };
+
 
     return (
         <GoogleOAuthProvider clientId={clientId}>
