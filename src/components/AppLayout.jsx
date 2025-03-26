@@ -85,17 +85,16 @@ const AppLayout = ({ children }) => {
     // ✅ Hiển thị thêm nếu là nhân viên (staff)
     ...(role === "staff"
       ? [
-        { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
-        { key: "8", label: <Link to="/toppings">Toppings</Link> },
-        {
-          key: "6",
-          label: <Link to="/ratingStatic">Thống Kê Đánh Giá</Link>,
-        },
-        { key: "7", label: <Link to="/export">Xuất Thống Kê</Link> },
-        { key: "5", label: <Link to="/confirmOrder">Xác nhận đơn</Link> },
-        // { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
-      ]
-
+          { key: "2", label: <Link to="/drinks">Đồ Uống</Link> },
+          { key: "8", label: <Link to="/toppings">Toppings</Link> },
+          {
+            key: "6",
+            label: <Link to="/ratingStatic">Thống Kê Đánh Giá</Link>,
+          },
+          { key: "7", label: <Link to="/export">Xuất Thống Kê</Link> },
+          { key: "5", label: <Link to="/confirmOrder">Xác nhận đơn</Link> },
+          // { key: "3", label: <Link to="/add-drink">Thêm Đồ Uống</Link> },
+        ]
       : []),
     // ✅ Hiển thị thêm nếu là khách hàng (customer)
     ...(role === "customer"
@@ -117,7 +116,7 @@ const AppLayout = ({ children }) => {
         ]
       : []),
     {
-      key: "8",
+      key: "12",
       label: (
         <Dropdown overlay={profileMenu} trigger={["click"]}>
           <Avatar
